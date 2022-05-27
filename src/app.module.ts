@@ -5,12 +5,14 @@ import { AppService } from './app.service';
 import { configService } from './config/config.service';
 import { ExpenseModule } from './expense/expense.module';
 import { SubscriberModule } from './subscriber/subscriber.module';
+import { CalculatorModule } from './calculator/calculator.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
     ExpenseModule,
     SubscriberModule,
+    CalculatorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
