@@ -3,11 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
 } from '@nestjs/common';
+import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ExpenseEntity } from './expense.entity';
 import { ExpenseService } from './expense.service';
 
@@ -26,7 +26,7 @@ export class ExpenseController {
   }
 
   @Post()
-  async createExpense(@Body() expense: ExpenseEntity) {
+  async createExpense(@Body() expense: CreateExpenseDto) {
     return await this.expenseService.createExpense(expense);
   }
 

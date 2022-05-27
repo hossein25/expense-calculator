@@ -1,7 +1,10 @@
+import { SubscriberEntity } from 'src/subscriber/subscriber.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -17,8 +20,9 @@ export class ExpenseEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Column()
-  payer: string;
+  @ManyToOne(() => SubscriberEntity)
+  @JoinColumn()
+  payer: SubscriberEntity;
 
   @Column()
   price: string;

@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { SubscriberEntity } from 'src/subscriber/subscriber.entity';
 import { ExpenseEntity } from '../expense/expense.entity';
 import EnvFile from './env.service';
 
@@ -40,7 +41,7 @@ class ConfigService {
       password: this.getValue('POSTGRES_PASSWORD'),
       database: this.getValue('POSTGRES_DATABASE'),
       synchronize: true,
-      entities: [ExpenseEntity],
+      entities: [ExpenseEntity, SubscriberEntity],
       // migrationsTableName: 'migration',
       // migrations: ['src/migration/*.ts'],
 
