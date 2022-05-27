@@ -1,0 +1,8 @@
+{
+  "subscriber": {
+    "added": "Payer successfully added",
+    "error": {
+      "notFound": "Payer not found"
+    }
+  }
+}

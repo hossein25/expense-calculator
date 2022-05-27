@@ -27,7 +27,7 @@ export class SubscriberController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.subscriberService.getSubscriberById(+id);
+    return this.subscriberService.getSubscriberById(id);
   }
 
   @Put(':id')
@@ -40,6 +40,6 @@ export class SubscriberController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.subscriberService.removeSubscriber(+id);
+    return this.subscriberService.removeSubscriber(id);
   }
 }
