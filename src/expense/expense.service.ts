@@ -21,11 +21,24 @@ export class ExpenseService {
   }
 
   async getExpenseById(id: string) {
-    const expense = await this.expenseRepository.findOne(id);
+    const expense = await this.expenseRepository.findOne(id, {
+      relations: ['payer'],
+    });
     if (!expense) {
       throw new NotFoundException('Expense not found').getResponse();
     }
     return expense;
+  }
+
+  async getExpenseBySubscriber(subscriberId: string) {
+    const expenses = await this.expenseRepository.find({
+      where: { payer: subscriberId },
+      relations: ['payer'],
+    });
+    if (!expenses) {
+      throw new NotFoundException('Expense not found').getResponse();
+    }
+    return expenses;
   }
 
   async createExpense(expense: CreateExpenseDto) {

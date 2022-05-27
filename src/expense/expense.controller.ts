@@ -25,6 +25,11 @@ export class ExpenseController {
     return await this.expenseService.getExpenseById(id);
   }
 
+  @Get('subscriber/:id')
+  async getExpenseBySubscriber(@Param('id') id: string) {
+    return await this.expenseService.getExpenseBySubscriber(id);
+  }
+
   @Post()
   async createExpense(@Body() expense: CreateExpenseDto) {
     return await this.expenseService.createExpense(expense);
