@@ -4,7 +4,7 @@ import { ExpenseEntity } from '../expense/expense.entity';
 import EnvFile from './env.service';
 
 class ConfigService {
-  constructor(private env: { [k: string]: string | undefined }) {
+  constructor(private env: { [k: string]: string | number | undefined }) {
     this.env = env;
   }
 
@@ -14,6 +14,8 @@ class ConfigService {
       throw new Error(`config error - missing env.${key}`);
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
     return value;
   }
 
