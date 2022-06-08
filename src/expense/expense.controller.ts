@@ -6,8 +6,11 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
+import { GetExpenseFilterDto } from './dto/get-expense-filter.dto';
+import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { ExpenseEntity } from './expense.entity';
 import { ExpenseService } from './expense.service';
 
@@ -16,8 +19,11 @@ export class ExpenseController {
   constructor(private readonly expenseService: ExpenseService) {}
 
   @Get()
-  async getAllExpenses() {
-    return await this.expenseService.getAllExpenses();
+  async getAllExpenses(
+    @Query()
+    filter: GetExpenseFilterDto,
+  ) {
+    return await this.expenseService.getAllExpenses(filter);
   }
 
   @Get(':id')
@@ -26,8 +32,12 @@ export class ExpenseController {
   }
 
   @Get('subscriber/:id')
-  async getExpenseBySubscriber(@Param('id') id: string) {
-    return await this.expenseService.getExpenseBySubscriber(id);
+  async getExpenseBySubscriber(
+    @Param('id') id: string,
+    @Query()
+    filter: GetExpenseFilterDto,
+  ) {
+    return await this.expenseService.getExpenseBySubscriber(id, filter);
   }
 
   @Post()
@@ -36,7 +46,10 @@ export class ExpenseController {
   }
 
   @Put(':id')
-  async updateExpense(@Body() expense: ExpenseEntity, @Param('id') id: string) {
+  async updateExpense(
+    @Body() expense: UpdateExpenseDto,
+    @Param('id') id: string,
+  ) {
     return await this.expenseService.updateExpense(id, expense);
   }
 

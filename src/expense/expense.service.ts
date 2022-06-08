@@ -1,8 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DateFilterEnum } from 'src/common/date-filter.enum';
+import { Order } from 'src/common/order.enum';
 import { SubscriberEntity } from 'src/subscriber/subscriber.entity';
-import { Repository } from 'typeorm';
+import { Between, Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateExpenseDto } from './dto/create-expense.dto';
+import { GetExpenseFilterDto } from './dto/get-expense-filter.dto';
+import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { ExpenseEntity } from './expense.entity';
 
 @Injectable()
@@ -14,10 +18,17 @@ export class ExpenseService {
     private readonly subscriberRepository: Repository<SubscriberEntity>,
   ) {}
 
-  async getAllExpenses() {
-    return await this.expenseRepository.find({
-      relations: ['payer'],
-    });
+  async getAllExpenses(filter: GetExpenseFilterDto) {
+    const { dateFilter, order } = filter;
+
+    const query = this.expenseRepository.createQueryBuilder('expense');
+
+    this.createExpensesDateFilter(query, dateFilter);
+
+    query.leftJoinAndSelect('expense.payer', 'payer');
+
+    this.createExpensesOrderFilter(query, order);
+    return await query.getMany();
   }
 
   async getExpenseById(id: string) {
@@ -30,15 +41,66 @@ export class ExpenseService {
     return expense;
   }
 
-  async getExpenseBySubscriber(subscriberId: string) {
-    const expenses = await this.expenseRepository.find({
-      where: { payer: subscriberId },
-      relations: ['payer'],
-    });
-    if (!expenses) {
-      throw new NotFoundException('Expense not found').getResponse();
+  async getExpenseBySubscriber(
+    subscriberId: string,
+    filter: GetExpenseFilterDto,
+  ) {
+    const { dateFilter, order } = filter;
+
+    const query = this.expenseRepository
+      .createQueryBuilder('expense')
+      .andWhere('expense.payer = :subscriberId', {
+        subscriberId,
+      });
+
+    this.createExpensesDateFilter(query, dateFilter);
+
+    query.leftJoinAndSelect('expense.payer', 'payer');
+
+    this.createExpensesOrderFilter(query, order);
+    return await query.getMany();
+  }
+
+  createExpensesDateFilter(
+    query: SelectQueryBuilder<ExpenseEntity>,
+    dateFilter: DateFilterEnum,
+  ) {
+    if (dateFilter) {
+      if (dateFilter === DateFilterEnum.CURRENT_MONTH) {
+        const createdAt = new Date();
+        createdAt.setDate(1);
+        createdAt.setHours(0, 0, 0, 0);
+        query.andWhere('expense.createdAt >= :createdAt', { createdAt });
+      } else if (dateFilter === DateFilterEnum.LAST_MONTH) {
+        const after = new Date();
+        after.setDate(1);
+        after.setHours(0, 0, 0, 0);
+
+        const before = new Date();
+        before.setDate(1);
+        before.setHours(0, 0, 0, 0);
+
+        if (after.getMonth() > 1) {
+          after.setMonth(after.getMonth() - 1);
+        } else {
+          after.setMonth(12);
+          after.setFullYear(after.getFullYear() - 1);
+        }
+        query.where({ createdAt: Between(after, before) });
+      }
     }
-    return expenses;
+
+    return query;
+  }
+
+  createExpensesOrderFilter(
+    query: SelectQueryBuilder<ExpenseEntity>,
+    order: Order,
+  ) {
+    if (order) {
+      query.orderBy('created_at', order);
+    }
+    return query;
   }
 
   async createExpense(expense: CreateExpenseDto) {
@@ -50,7 +112,7 @@ export class ExpenseService {
     return await this.expenseRepository.save(newExpense);
   }
 
-  async updateExpense(id: string, expense: ExpenseEntity) {
+  async updateExpense(id: string, expense: UpdateExpenseDto) {
     return await this.expenseRepository.update(id, expense).then((res) => {
       if (res.affected === 0) {
         throw new NotFoundException('Expense not found').getResponse();
