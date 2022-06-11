@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from 'src/common/order.enum';
 import { DateFilterService } from 'src/shared/services/date-filter.service';
+import { TranslationService } from 'src/shared/services/translations.service';
+import { SubscriberNotFoundException } from 'src/subscriber/exceptions/subscriber-not-found.exception';
 import { SubscriberEntity } from 'src/subscriber/subscriber.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateExpenseDto } from './dto/create-expense.dto';
@@ -17,6 +19,7 @@ export class ExpenseService {
     @InjectRepository(SubscriberEntity)
     private readonly subscriberRepository: Repository<SubscriberEntity>,
     private readonly dateFilterService: DateFilterService,
+    private readonly translationService: TranslationService,
   ) {}
 
   async getAllExpenses(filter: GetExpenseFilterDto) {
@@ -99,6 +102,20 @@ export class ExpenseService {
     });
   }
 
+  async deleteAllSubscriberExpenses(subscriberId: string) {
+    const payer = await this.subscriberRepository.findOne({
+      where: { id: subscriberId },
+    });
+
+    if (!payer) {
+      throw this.getLocalizedNotFoundException();
+    }
+
+    return await this.expenseRepository.delete({
+      payer: { id: subscriberId },
+    });
+  }
+
   _createExpense(expense: CreateExpenseDto, payer: SubscriberEntity) {
     const newExpense = new ExpenseEntity();
     newExpense.title = expense.title;
@@ -107,5 +124,10 @@ export class ExpenseService {
     newExpense.payer = payer;
 
     return newExpense;
+  }
+
+  getLocalizedNotFoundException() {
+    const exception = new SubscriberNotFoundException(this.translationService);
+    return exception.getResponse();
   }
 }

@@ -56,4 +56,9 @@ export class ExpenseController {
   async deleteExpense(@Param('id') id: string) {
     return await this.expenseService.deleteExpense(id);
   }
+
+  @Delete('delete-all-subscriber-expenses/:id')
+  async deleteAllSubscriberExpenses(@Param('id') id: string) {
+    return await this.expenseService.deleteAllSubscriberExpenses(id);
+  }
 }
