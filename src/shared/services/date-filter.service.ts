@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DateFilterEnum } from 'src/common/date-filter.enum';
-import { Between, SelectQueryBuilder } from 'typeorm';
+import { SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class DateFilterService {
@@ -26,7 +26,10 @@ export class DateFilterService {
           after.setMonth(12);
           after.setFullYear(after.getFullYear() - 1);
         }
-        query.where({ createdAt: Between(after, before) });
+
+        query
+          .andWhere('expense.createdAt >= :after', { after })
+          .andWhere('expense.createdAt >= :before', { before });
       }
     }
 
