@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DateFilterEnum } from 'src/common/date-filter.enum';
 import { Order } from 'src/common/order.enum';
+import { DateFilterService } from 'src/shared/services/date-filter.service';
 import { SubscriberEntity } from 'src/subscriber/subscriber.entity';
-import { Between, Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { GetExpenseFilterDto } from './dto/get-expense-filter.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
@@ -16,6 +16,7 @@ export class ExpenseService {
     private readonly expenseRepository: Repository<ExpenseEntity>,
     @InjectRepository(SubscriberEntity)
     private readonly subscriberRepository: Repository<SubscriberEntity>,
+    private readonly dateFilterService: DateFilterService,
   ) {}
 
   async getAllExpenses(filter: GetExpenseFilterDto) {
@@ -23,7 +24,7 @@ export class ExpenseService {
 
     const query = this.expenseRepository.createQueryBuilder('expense');
 
-    this.createExpensesDateFilter(query, dateFilter);
+    this.dateFilterService.createFilter(query, dateFilter);
 
     query.leftJoinAndSelect('expense.payer', 'payer');
 
@@ -53,44 +54,12 @@ export class ExpenseService {
         subscriberId,
       });
 
-    this.createExpensesDateFilter(query, dateFilter);
+    this.dateFilterService.createFilter(query, dateFilter);
 
     query.leftJoinAndSelect('expense.payer', 'payer');
 
     this.createExpensesOrderFilter(query, order);
     return await query.getMany();
-  }
-
-  createExpensesDateFilter(
-    query: SelectQueryBuilder<ExpenseEntity>,
-    dateFilter: DateFilterEnum,
-  ) {
-    if (dateFilter) {
-      if (dateFilter === DateFilterEnum.CURRENT_MONTH) {
-        const createdAt = new Date();
-        createdAt.setDate(1);
-        createdAt.setHours(0, 0, 0, 0);
-        query.andWhere('expense.createdAt >= :createdAt', { createdAt });
-      } else if (dateFilter === DateFilterEnum.LAST_MONTH) {
-        const after = new Date();
-        after.setDate(1);
-        after.setHours(0, 0, 0, 0);
-
-        const before = new Date();
-        before.setDate(1);
-        before.setHours(0, 0, 0, 0);
-
-        if (after.getMonth() > 1) {
-          after.setMonth(after.getMonth() - 1);
-        } else {
-          after.setMonth(12);
-          after.setFullYear(after.getFullYear() - 1);
-        }
-        query.where({ createdAt: Between(after, before) });
-      }
-    }
-
-    return query;
   }
 
   createExpensesOrderFilter(

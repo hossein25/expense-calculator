@@ -11,7 +11,6 @@ import {
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { GetExpenseFilterDto } from './dto/get-expense-filter.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
-import { ExpenseEntity } from './expense.entity';
 import { ExpenseService } from './expense.service';
 
 @Controller('expense')
