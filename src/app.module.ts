@@ -10,6 +10,7 @@ import { ExpenseModule } from './expense/expense.module';
 import { SharedModule } from './shared/shared.module';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { SubscriberModule } from './subscriber/subscriber.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { SubscriberModule } from './subscriber/subscriber.module';
     SubscriberModule,
     CalculatorModule,
     SharedModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
