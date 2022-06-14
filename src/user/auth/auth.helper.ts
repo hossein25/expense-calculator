@@ -34,7 +34,7 @@ export class AuthHelper {
   }
 
   encodePassword(password: string) {
-    const salt: string = bcrypt.getSaltSync(10);
+    const salt: string = bcrypt.genSaltSync(10);
     return bcrypt.hashSync(password, salt);
   }
 

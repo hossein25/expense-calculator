@@ -13,7 +13,7 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'varchar' })
   password!: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   email: string;
 
   @Column({ type: 'varchar', nullable: true })
