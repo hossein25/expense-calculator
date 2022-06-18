@@ -29,7 +29,7 @@ export class DateFilterService {
 
         query
           .andWhere('expense.createdAt >= :after', { after })
-          .andWhere('expense.createdAt >= :before', { before });
+          .andWhere('expense.createdAt <= :before', { before });
       }
     }
 
