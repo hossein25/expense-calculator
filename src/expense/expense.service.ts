@@ -80,6 +80,10 @@ export class ExpenseService {
       where: { id: expense.payerId },
     });
 
+    if (!payer) {
+      throw this.getLocalizedNotFoundException();
+    }
+
     const newExpense = this._createExpense(expense, payer);
     return await this.expenseRepository.save(newExpense);
   }
