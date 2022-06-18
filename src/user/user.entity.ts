@@ -1,5 +1,12 @@
 import { Exclude } from 'class-transformer';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  AfterInsert,
+  BaseEntity,
+  Column,
+  Entity,
+  Generated,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -8,6 +15,15 @@ export class UserEntity extends BaseEntity {
 
   @Column({ type: 'varchar' })
   username!: string;
+
+  @Column()
+  @Generated('increment')
+  referenceCode!: number;
+
+  @AfterInsert()
+  addReferenceCode() {
+    this.referenceCode = this.referenceCode + 100000;
+  }
 
   @Exclude()
   @Column({ type: 'varchar' })
