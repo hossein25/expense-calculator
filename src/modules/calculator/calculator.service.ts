@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Currency } from 'src/common/currency.enum';
-import { GetExpenseFilterDto } from 'src/expense/dto/get-expense-filter.dto';
-import { ExpenseEntity } from 'src/expense/expense.entity';
-import { ExpenseService } from 'src/expense/expense.service';
+import { GetExpenseFilterDto } from 'src/modules/expense/dto/get-expense-filter.dto';
+import { ExpenseEntity } from 'src/modules/expense/expense.entity';
+import { ExpenseService } from 'src/modules/expense/expense.service';
 
 @Injectable()
 export class CalculatorService {

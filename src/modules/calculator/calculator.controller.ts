@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { GetExpenseFilterDto } from 'src/expense/dto/get-expense-filter.dto';
+import { GetExpenseFilterDto } from 'src/modules/expense/dto/get-expense-filter.dto';
 import { CalculatorService } from './calculator.service';
 
 @Controller('calculator')

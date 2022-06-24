@@ -1,4 +1,4 @@
-import { SubscriberEntity } from 'src/subscriber/subscriber.entity';
+import { SubscriberEntity } from 'src/modules/subscriber/subscriber.entity';
 import {
   Column,
   CreateDateColumn,

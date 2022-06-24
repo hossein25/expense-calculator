@@ -5,12 +5,12 @@ import { I18nModule } from 'nestjs-i18n';
 import * as path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CalculatorModule } from './calculator/calculator.module';
-import { ExpenseModule } from './expense/expense.module';
+import { CalculatorModule } from './modules/calculator/calculator.module';
+import { ExpenseModule } from './modules/expense/expense.module';
 import { SharedModule } from './shared/shared.module';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
-import { SubscriberModule } from './subscriber/subscriber.module';
-import { UserModule } from './user/user.module';
+import { SubscriberModule } from './modules/subscriber/subscriber.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
