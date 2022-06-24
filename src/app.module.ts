@@ -11,6 +11,7 @@ import { SharedModule } from './shared/shared.module';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { SubscriberModule } from './modules/subscriber/subscriber.module';
 import { UserModule } from './modules/user/user.module';
+import { GroupsModule } from './modules/groups/groups.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { UserModule } from './modules/user/user.module';
     CalculatorModule,
     SharedModule,
     UserModule,
+    GroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
