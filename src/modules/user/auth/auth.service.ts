@@ -5,6 +5,7 @@ import { UserEntity } from '../user.entity';
 import { AuthHelper } from './auth.helper';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { LoginResponseDto } from './dto/login-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -51,11 +52,11 @@ export class AuthService {
 
     this.userRepository.update(user.id, { lastLoginAt: new Date() });
 
-    return this.authHelper.generateToken(user);
+    return new LoginResponseDto(this.authHelper.generateToken(user));
   }
 
   async refresh(user: UserEntity) {
     this.userRepository.update(user.id, { lastLoginAt: new Date() });
-    return this.authHelper.generateToken(user);
+    return new LoginResponseDto(this.authHelper.generateToken(user));
   }
 }
