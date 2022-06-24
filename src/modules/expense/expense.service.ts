@@ -10,6 +10,8 @@ import { CreateExpenseDto } from './dto/create-expense.dto';
 import { GetExpenseFilterDto } from './dto/get-expense-filter.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { ExpenseEntity } from './expense.entity';
+import { GroupsEntity } from '../groups/group.entity';
+import { GroupNotFoundException } from '../groups/exceptions/group-not-found.exception';
 
 @Injectable()
 export class ExpenseService {
@@ -18,6 +20,8 @@ export class ExpenseService {
     private readonly expenseRepository: Repository<ExpenseEntity>,
     @InjectRepository(SubscriberEntity)
     private readonly subscriberRepository: Repository<SubscriberEntity>,
+    @InjectRepository(GroupsEntity)
+    private readonly groupRepository: Repository<GroupsEntity>,
     private readonly dateFilterService: DateFilterService,
     private readonly translationService: TranslationService,
   ) {}
@@ -81,10 +85,18 @@ export class ExpenseService {
     });
 
     if (!payer) {
-      throw this.getLocalizedNotFoundException();
+      throw this.getLocalizedSubscriberNotFoundException();
     }
 
-    const newExpense = this._createExpense(expense, payer);
+    const group = await this.groupRepository.findOne({
+      where: { id: expense.groupId },
+    });
+
+    if (!group) {
+      throw this.getLocalizedGroupNotFoundException();
+    }
+
+    const newExpense = this._createExpense(expense, payer, group);
     return await this.expenseRepository.save(newExpense);
   }
 
@@ -112,7 +124,7 @@ export class ExpenseService {
     });
 
     if (!payer) {
-      throw this.getLocalizedNotFoundException();
+      throw this.getLocalizedSubscriberNotFoundException();
     }
 
     return await this.expenseRepository.delete({
@@ -120,18 +132,28 @@ export class ExpenseService {
     });
   }
 
-  _createExpense(expense: CreateExpenseDto, payer: SubscriberEntity) {
+  _createExpense(
+    expense: CreateExpenseDto,
+    payer: SubscriberEntity,
+    group: GroupsEntity,
+  ) {
     const newExpense = new ExpenseEntity();
     newExpense.title = expense.title;
     newExpense.description = expense.description;
     newExpense.price = expense.price;
     newExpense.payer = payer;
+    newExpense.group = group;
 
     return newExpense;
   }
 
-  getLocalizedNotFoundException() {
+  getLocalizedSubscriberNotFoundException() {
     const exception = new SubscriberNotFoundException(this.translationService);
+    return exception.getResponse();
+  }
+
+  getLocalizedGroupNotFoundException() {
+    const exception = new GroupNotFoundException(this.translationService);
     return exception.getResponse();
   }
 }

@@ -14,4 +14,8 @@ export class CreateExpenseDto {
   @IsString()
   @IsUUID()
   payerId: string;
+
+  @IsString()
+  @IsUUID()
+  groupId: string;
 }

@@ -4,5 +4,11 @@
     "error": {
       "notFound": "Payer not found"
     }
+  },
+  "group": {
+    "added": "Group successfully added",
+    "error": {
+      "notFound": "Group not found"
+    }
   }
 }

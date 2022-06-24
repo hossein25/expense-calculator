@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { GroupsEntity } from '../groups/group.entity';
 
 @Entity('expense')
 export class ExpenseEntity {
@@ -23,6 +24,10 @@ export class ExpenseEntity {
   @ManyToOne(() => SubscriberEntity)
   @JoinColumn()
   payer: SubscriberEntity;
+
+  @ManyToOne(() => GroupsEntity)
+  @JoinColumn()
+  group: GroupsEntity;
 
   @Column()
   price: string;
